@@ -1,0 +1,66 @@
+Assignment 4 README file. 
+Submitted by Zuhaib Ul Zamann
+2018MT60798
+
+1) TrieNode:- It is the building block of Trie data structure. It has the following fields.
+val:- It is the value to be stored in the TrieNode;
+arr= It is an array of refrences of type TrieNodes(More essentialy direct addressing method of mapping to refrences of child).
+s= It is the string representation of all the blocks of the arr which are non-null;
+armVar:- It is the prefix of the node. That is all the strings with this prefix will reach that node.
+n:- It determines the size of the direct addressing map (arr).
+endofword:- It determines if there is a word ending at this node of trie.
+
+
+2) Trie:-[Every TrieNode array is of size 128]
+Following are the functions implemented in Trie
+1) Insert:- The insertion procedure is basic. It first finds the index of the first character in the word. {Checks if that index is null or not in the root arr. If it is null then a new 	TrieNode is created }(This part  is done in the insert function in TrieNode) and the refrence of the object is stored in that array else follow the refrence.(O(l^2) Due to string concatenation).
+2) Delete:- The position at which the value is stored is found and then if any more refrences are from there then we simply set the end of word boolean as false (Provided it was true earlier) else we try recursively deleting the nodes which are having 0 variables in them. If there in this proccess(Finding) we encounter a null refrence the the obect is not in that Trie and we return false. The whole process is done in a recursive function DeleteRec which stores the result of deletion in a boolean array of size 1(To ensure pass by value of refrence).
+3) printLevel:-This is acheived using function print according. It saves the letters on the level in each node in an ArrayList. Then arrayList is extracted in an array and that array is sorted using HeapSort function. The basic idea is to heapify the array and then by a series of extract max remove each element and print in lexicographic order.
+4) Search:-Search function checks at each Level presence of the corresponding character in the map of the corresponding node. If it encounters a null in between then it returns null. Otherwise if the end is reached but boolean end of word is false then again null is returned. Otherwise the node is returned.
+5) startswith :- It follows almost similar algorithm as seacrh till it reaches end of the prefix word. If it reaches end of prefix then it simply returns the node in which it has reached(WITHOUT checking for end of word boolean there)
+6) PrintTrie:-It prints all the word which (have been stored in the path as the path of the current node) i.e which have prefix as armVar of input TrieNode;
+7)print():-It is level wise lexicographic order printing of Trie. The process done in this method is essentialy same as level wise printing use printLevel1 function(Just a bit formatting change from print level) and then keep on doing so till you encounter a level which has nothing and stop. Time complexity of this part is O(n^2) n is the number of words.
+
+
+3)Person:- It is basic and its implementation is self understood.
+
+4)Priority Queue(MaxHeap):- The implemetation of my priority Queue is based on the pseudo code given in the lectures on Coursera by prof. Alexander Kukillov of princeton university. (Although not entirely but the basics remain that ).
+It has the following methods:-
+1) Parent:- It gives the index of the parent given the index of a child :: O(1)
+2) LeftChild:- It gives the index of the left child given index of parent :: O(1)
+3) RightChild:- It gives the index of the right child given index of parent :: O(1)
+4) ShiftUp: It is restructuring method  to restructure back to heap. :: O(logn)
+5) ShiftDown: It is a restructuring method to restructure back to heap :: O(logn)
+7) Insert: Insertion is done at the right most index in the heap(Internally mantained ArrayList). Then shiftUp is called on the index of insertion :: O(logn)
+8) Delete : The first element{Maximum element as it is a max Heap} is replaced by the element in the right most index of heap(This is done for two purposes. To remove the maximum element and keep the heap left complete). Then ShiftDown is called at root to restructure and mantain heap properties. In heap restructure important point to know is that we only swap the respective valuea and not in essence change the Skeleton of the heap. :: O(logn)
+9)heapify(). This function is used in case of heap sort in TrieNode
+ NOte:- I am storing elements as pairs :- The element and the index with which it was inserted (to ensure FIFO in case of same priority)
+10) NewExtractMax(): This returns the max element along with its index of insertion. ::Output type is ArrayList
+11) NewInsert(): This inserts the element with index given as input 
+
+
+5)Student:- Basic implementation and the code is self understood.
+
+6) RedBlackNode:
+The main Fields are left,right,isLeft,isRed and value and are self understood to what they stand for. There is besides that a list values storing all the values to be mapped with given key.
+
+7) RBTree:- The notations used in this code are from GoodRich Tamassia Textbook. The code for print2D was taken from internet and its sole purpose was debugging the implementation.
+   The main methods are:
+   Insert(): Insertion is done like in a Normal BST with a speciality that if a key already inserted is found then the object is inserted in the List mantained inside the RedBlackNode.    AFter that recolour function is called on node which is inserted. The recolour may recursively call recolour or restructure depending    on  if there is a red uncle or a black uncle respectively :: O(logn)
+   Search(): Works like a normal search in a BST :: O(logn)
+   The implementation of restructuring and recolouring is self understood for recolouring and demonstrated in comments for restructuring in the code.
+
+
+8)project Scheduler:-
+ This uses all the three DS created and Maps. I store projects in RBTree (projects).jobs in a Trie(jobsTrie) and Heap(jobsHeap).completed jobs in ArrayList compjobs, Incompjobs in a HashMap  IncompJobs and users in an RBTree users.
+ 1) handle_Project:- In handle_project we create a Project and then the project is stored in projects RBTree
+ 2) handle_users:- In handle_project we create a User and then the User is stored in users RBTree
+ 3) hanlde job:- We retreive the project and user to which the job belongs .print "Creating job". If any of them is not present then we print "No such user/project  exists<:/.> If present    then  we create the job with the given project and refrence and store it in a jobsHeap and jobsTrie.
+ 4) handle_query:- In this we seacrh for our job in jobsTrie and then print the specs.
+ 5) handle_empty_line:- In this extract a job(HIGHEST PRIORITY) from heap and then  we find the project to which it belongs after which we check for budget of the project and the running     time  of the extracted project. If the running time is more then we put the job in IncompJobs heap (and repeat) else we execute the job set its status as completed increase the globalTime  by   running time and decrease the budget of the project by running time and adding the job to compjobs List.
+ 6) handle_add: In this we add the Budget of the given project and reactivate all the incomplete jobs of the project and put them back in the jobsHeap
+ 7) run_to_completeion: In this we keep on extracting jobs from heap and trying to execute them till no jobs are left in heap. All the jobs which are unable to be executed are saved in   incompJobs map .
+ 8) print_stats(): In this we print the stats of jobs(First finished and then unfinished)
+ Finished jobs are printed in order of executiona and unfinsihed jobs are printed in order of priority and FIFO
+ 
+Note:-Almost all the processes of debugging I have done are put in comments of the code
